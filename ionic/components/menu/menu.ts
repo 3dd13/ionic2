@@ -95,7 +95,8 @@ import * as gestures from  './menu-gestures';
     'content',
     'id',
     'side',
-    'type'
+    'type',
+    'swipeOpenEnabled'
   ],
   defaultInputs: {
     'side': 'left',
@@ -156,7 +157,9 @@ export class Menu extends Ion {
       self.app.register(self.id, self);
     }
 
-    self._initGesture();
+    if ((self.swipeOpenEnabled || '').toString() !== 'false') {
+      self._initGesture();
+    }
     self._initType(self.type);
 
     self._cntEle.classList.add('menu-content');

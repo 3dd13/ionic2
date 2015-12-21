@@ -126,6 +126,7 @@ export class Menu extends Ion {
     this.isOpen = false;
     this._preventTime = 0;
     this.isEnabled = true;
+    this.isSwipeEnabled = true;
   }
 
   /**
@@ -239,7 +240,7 @@ export class Menu extends Ion {
    */
   setProgressStart() {
     // user started swiping the menu open/close
-    if (this._isPrevented() || !this.isEnabled) return;
+    if (this._isPrevented() || !this.isEnabled || !this.isSwipeEnabled) return;
 
     this._before();
 
@@ -251,7 +252,7 @@ export class Menu extends Ion {
    */
   setProgess(value) {
     // user actively dragging the menu
-    if (this.isEnabled) {
+    if (this.isEnabled && this.isSwipeEnabled) {
       this._prevent();
       this._getType().setProgess(value);
       this.opening.next(value);
@@ -263,7 +264,7 @@ export class Menu extends Ion {
    */
   setProgressEnd(shouldComplete) {
     // user has finished dragging the menu
-    if (this.isEnabled) {
+    if (this.isEnabled && this.isSwipeEnabled) {
       this._prevent();
       this._getType().setProgressEnd(shouldComplete).then(isOpen => {
         this._after(isOpen);
@@ -363,6 +364,16 @@ export class Menu extends Ion {
     if (!shouldEnable) {
       this.close();
     }
+    return this;
+  }
+
+  /**
+   * Used to enable or disable the ability to swipe open the menu.
+   * @param {boolean} shouldEnable  True if it should be swipe-able, false if not.
+   * @return {Menu}  Returns the instance of the menu, which is useful for chaining.
+   */
+  swipeEnable(shouldEnable) {
+    this.isSwipeEnabled = shouldEnable;
     return this;
   }
 

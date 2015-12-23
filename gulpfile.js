@@ -397,7 +397,7 @@ gulp.task('src', function(done){
   );
 })
 
-gulp.task('publish', ['src'], function(done){
+gulp.task('package', ['src'], function(done){
   var _ = require('lodash');
   var fs = require('fs');
   var distDir = 'dist';
@@ -425,20 +425,25 @@ gulp.task('publish', ['src'], function(done){
   	var packageTemplate = _.template(fs.readFileSync('scripts/npm/package.json'));
     fs.writeFileSync(distDir + '/package.json', packageTemplate(answers));
 
-    var spawn = require('child_process').spawn;
-    var npmCmd = spawn('npm', ['publish', './' + distDir]);
+    done();
+  });
+});
 
-    npmCmd.stdout.on('data', function (data) {
-      console.log(data.toString());
-    });
+gulp.task('publish', ['package'], function(done){
+  var distDir = 'dist';
+  var spawn = require('child_process').spawn;
+  var npmCmd = spawn('npm', ['publish', './' + distDir]);
 
-    npmCmd.stderr.on('data', function (data) {
-      console.log('npm err: ' + data.toString());
-    });
+  npmCmd.stdout.on('data', function (data) {
+    console.log(data.toString());
+  });
 
-    npmCmd.on('close', function() {
-      done();
-    });
+  npmCmd.stderr.on('data', function (data) {
+    console.log('npm err: ' + data.toString());
+  });
+
+  npmCmd.on('close', function() {
+    done();
   });
 });
 
